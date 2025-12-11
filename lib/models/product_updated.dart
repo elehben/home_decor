@@ -17,6 +17,7 @@ class Product {
     this.isFavorite = false,
   });
 
+  /// Factory untuk membuat Product dari Map (Firestore/dummy data)
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id'],

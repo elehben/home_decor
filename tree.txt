@@ -54,6 +54,7 @@
 │   │   │   │   └── AndroidManifest.xml
 │   │   │   └── profile
 │   │   │       └── AndroidManifest.xml
+│   │   └── google-services.json
 │   ├── gradle
 │   │   └── wrapper
 │   │       ├── gradle-wrapper.jar
@@ -70,8 +71,6 @@
 │   └── settings.gradle.kts
 ├── assets
 │   └── images
-│       ├── alejandrao_httpss.mj 7.png
-│       ├── alejandrao_httpss.mj 9.png
 │       ├── aluminum_chair.png
 │       ├── banner.png
 │       ├── bed.png
@@ -143,24 +142,38 @@
 │   ├── RunnerTests
 │   │   └── RunnerTests.swift
 ├── lib
-│   ├── data
-│   │   └── dummy_data.dart
 │   ├── models
+│   │   ├── product_updated.dart
 │   │   └── product.dart
 │   ├── pages
 │   │   ├── best_seller_page.dart
 │   │   ├── cart_page.dart
 │   │   ├── home_page.dart
+│   │   ├── login_page.dart
 │   │   ├── new_collection_page.dart
+│   │   ├── product_detail_page.dart
 │   │   ├── profile_page.dart
+│   │   ├── profile_subpages.dart
 │   │   └── wishlist_page.dart
+│   ├── providers
+│   │   ├── auth_provider.dart
+│   │   ├── cart_provider.dart
+│   │   ├── settings_provider.dart
+│   │   └── wishlist_provider.dart
+│   ├── services
+│   │   └── firebase_service.dart
 │   ├── widgets
-│   │   └── product_card.dart
+│   │   ├── firebase_admin_page.dart
+│   │   ├── product_card.dart
+│   │   └── upload_data_widget.dart
+│   ├── firebase_options.dart
 │   └── main.dart
 ├── linux
 │   ├── flutter
 │   │   ├── ephemeral
 │   │   │   └── .plugin_symlinks
+│   │   │       ├── file_selector_linux
+│   │   │       ├── image_picker_linux
 │   │   │       └── path_provider_linux
 │   │   ├── CMakeLists.txt
 │   │   ├── generated_plugin_registrant.cc
@@ -216,6 +229,13 @@
 │   │   └── contents.xcworkspacedata
 │   ├── RunnerTests
 │   │   └── RunnerTests.swift
+├── screenshots
+│   ├── bestseller.png
+│   ├── cart.png
+│   ├── home.png
+│   ├── newcollection.png
+│   ├── profile.png
+│   └── wishlist.png
 ├── web
 │   ├── icons
 │   │   ├── Icon-192.png
@@ -229,6 +249,13 @@
 │   ├── flutter
 │   │   ├── ephemeral
 │   │   │   └── .plugin_symlinks
+│   │   │       ├── cloud_firestore
+│   │   │       ├── file_selector_windows
+│   │   │       ├── firebase_auth
+│   │   │       ├── firebase_core
+│   │   │       ├── firebase_storage
+│   │   │       ├── geolocator_windows
+│   │   │       ├── image_picker_windows
 │   │   │       └── path_provider_windows
 │   │   ├── CMakeLists.txt
 │   │   ├── generated_plugin_registrant.cc
@@ -251,6 +278,7 @@
 │   └── CMakeLists.txt
 ├── .metadata
 ├── analysis_options.yaml
+├── firebase.json
 ├── home_decor.iml
 ├── pubspec.lock
 ├── pubspec.yaml

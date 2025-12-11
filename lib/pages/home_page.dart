@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
-import '../data/dummy_data.dart';
+import '../services/firebase_service.dart';
 import '../widgets/product_card.dart';
+import '../providers/settings_provider.dart';
 import 'best_seller_page.dart';
 import 'new_collection_page.dart';
 
@@ -14,29 +16,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<Product> bestSellers;
-  late List<Product> newCollections;
-
-  @override
-  void initState() {
-    super.initState();
-    bestSellers = List.from(bestSellerProducts);
-    newCollections = List.from(newCollectionProducts);
-  }
+  final FirebaseService _firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+    final isDark = settings.isDarkMode;
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xfff8f5f2),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text("Home Decor"),
         titleTextStyle: GoogleFonts.poppins(
-            color: Colors.brown, 
+            color: theme.colorScheme.primary, 
             fontSize: 24, 
             fontWeight: FontWeight.bold
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.brown,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -60,23 +58,23 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (_) => const BestSellerPage()),
               );
-            }),
-            _buildHorizontalProductList(bestSellers),
+            }, isDark, theme),
+            _buildFirebaseProductList('best_seller'),
             // New Collection Section
             _buildSectionTitle("New Collection", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const NewCollectionPage()),
               );
-            }),
-            _buildHorizontalProductList(newCollections),
+            }, isDark, theme),
+            _buildFirebaseProductList('new_collection'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title, VoidCallback onTap) {
+  Widget _buildSectionTitle(String title, VoidCallback onTap, bool isDark, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -85,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           Text(title,
             style:
               GoogleFonts.poppins(
-                color: Color(0xFF2B2B2B),
+                color: isDark ? Colors.white : const Color(0xFF2B2B2B),
                 fontSize: 20, 
                 fontWeight: FontWeight.bold
               )
@@ -95,7 +93,7 @@ class _HomePageState extends State<HomePage> {
             child: Text(
               "See All",
               style: GoogleFonts.poppins(
-                color: Colors.brown,
+                color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -105,20 +103,49 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHorizontalProductList(List<Product> products) {
+  Widget _buildFirebaseProductList(String category) {
     return SizedBox(
       height: 220,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return ProductCard(
-            product: products[index],
-            onFavoriteToggle: () {
-              setState(() {
-                products[index].isFavorite = !products[index].isFavorite;
-              });
+      child: StreamBuilder<List<Product>>(
+        stream: _firebaseService.streamProductsByCategory(category),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error loading products',
+                style: GoogleFonts.poppins(color: Colors.grey),
+              ),
+            );
+          }
+          
+          final products = snapshot.data ?? [];
+          
+          if (products.isEmpty) {
+            return Center(
+              child: Text(
+                'No products available',
+                style: GoogleFonts.poppins(color: Colors.grey),
+              ),
+            );
+          }
+          
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return ProductCard(
+                product: products[index],
+                onFavoriteToggle: () {
+                  setState(() {
+                    products[index].isFavorite = !products[index].isFavorite;
+                  });
+                },
+              );
             },
           );
         },

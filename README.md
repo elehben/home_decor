@@ -2,7 +2,7 @@
 # 🏡 Home Decor App
 
 Aplikasi **Home Decor App** merupakan aplikasi mobile berbasis **Flutter** yang dirancang untuk memberikan pengalaman berbelanja dekorasi rumah secara modern, interaktif, dan estetis.  
-Aplikasi ini menampilkan berbagai kategori produk seperti **Best Seller**, **New Collection**, serta fitur tambahan seperti **Cart**, **Wishlist**, dan **Profile Page**.  
+Aplikasi ini menampilkan berbagai kategori produk seperti **Best Seller**, **New Collection**, serta fitur lengkap seperti **Cart**, **Wishlist**, **Profile**, dan integrasi penuh dengan **Firebase**.
 
 Desain aplikasi diadaptasi dari [Figma Home Decor App UI Kit](https://www.figma.com/design/lZMfNa7bt1VyKcLzFpuX0J/Home-Decor-App-Mobile-UI-Kit).
 
@@ -11,43 +11,127 @@ Desain aplikasi diadaptasi dari [Figma Home Decor App UI Kit](https://www.figma.
 ## 📱 Fitur Utama
 
 ### 🏠 Home Page
-Menampilkan banner promosi dan daftar produk unggulan seperti *Best Seller* dan *New Collection*.  
-Menggunakan tampilan horizontal scroll untuk mempermudah eksplorasi produk.
+- Menampilkan banner promosi dan daftar produk unggulan
+- Kategori **Best Seller** dan **New Collection** dengan horizontal scroll
+- Real-time data dari Firebase Firestore
 
 ### 🌟 Best Seller Page
-Menampilkan produk dengan tingkat penjualan tertinggi.  
-Setiap produk memiliki gambar, nama, harga, dan deskripsi singkat.
+- Menampilkan produk dengan tingkat penjualan tertinggi
+- Grid view dengan gambar, nama, harga, dan rating
+- Data streaming real-time dari Firebase
 
 ### 🛋️ New Collection Page
-Berisi koleksi produk terbaru dengan gaya tampilan *card grid*.  
-Produk ditampilkan secara menarik dan informatif.
+- Koleksi produk terbaru dengan tampilan card grid
+- Sinkronisasi otomatis dengan database
 
 ### 🛒 Cart Page
-Berfungsi sebagai keranjang belanja pengguna.  
-Menampilkan daftar produk yang telah ditambahkan beserta subtotal, ongkos kirim, dan total harga.
+- Keranjang belanja dengan sinkronisasi Firebase
+- Fitur increment/decrement quantity
+- Subtotal, ongkos kirim, dan total harga otomatis
+- **Dialog konfirmasi pembayaran** dengan pilihan metode bayar
+- Clear all items dengan konfirmasi
 
 ### 💖 Wishlist Page
-Menyimpan produk yang disukai pengguna.  
-Memiliki tombol **Add to Cart** untuk memindahkan produk ke halaman Cart.
+- Menyimpan produk favorit pengguna ke Firebase
+- Tombol **Add to Cart** langsung dari wishlist
+- Real-time sync antar device
 
 ### 👤 Profile Page
-Menampilkan informasi akun pengguna dan menu pengaturan.  
-Termasuk opsi *My Orders*, *Shipping Address*, dan *Payment Methods*.
+- Informasi akun pengguna (nama, email, foto)
+- **My Orders** - Riwayat pesanan
+- **Shipping Address** - Kelola alamat pengiriman
+- **Payment Methods** - Kelola metode pembayaran
+- **Settings** - Dark mode & multi-language
+- **Firebase Admin** - CRUD produk (admin only)
+
+### 🔐 Authentication
+- Login & Register dengan email/password
+- Auto-login dengan Firebase Auth state
+- Logout dengan konfirmasi
+
+### 🌙 Dark Mode
+- Toggle dark/light mode dari Settings
+- Semua halaman mendukung dark mode
+- Preferensi tersimpan
+
+### 🌐 Multi-Language
+- Dukungan Bahasa Indonesia & English
+- Mudah menambah bahasa baru
+
+---
+
+## 🏗️ Arsitektur Aplikasi
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      UI Layer                           │
+│  (Pages & Widgets)                                      │
+├─────────────────────────────────────────────────────────┤
+│                   State Management                      │
+│  (Providers: Auth, Cart, Wishlist, Settings)            │
+├─────────────────────────────────────────────────────────┤
+│                   Service Layer                         │
+│  (FirebaseService - CRUD Operations)                    │
+├─────────────────────────────────────────────────────────┤
+│                   Data Layer                            │
+│  (Firebase: Firestore, Auth)                            │
+└─────────────────────────────────────────────────────────┘
+```
+
+Aplikasi menggunakan **Provider Pattern** untuk state management dengan **Firebase** sebagai backend.
+
+---
+
+## 🔥 Firebase Integration
+
+### Struktur Database Firestore
+
+```
+firestore/
+├── products/                    # Koleksi produk
+│   └── {productId}/
+│       ├── name, price, image
+│       ├── description, category
+│       └── createdAt
+│
+├── users/                       # Koleksi user
+│   └── {userId}/
+│       ├── name, email, phone
+│       ├── cart/                # Sub-koleksi keranjang
+│       ├── wishlist/            # Sub-koleksi wishlist  
+│       ├── orders/              # Sub-koleksi pesanan
+│       ├── addresses/           # Sub-koleksi alamat
+│       └── paymentMethods/      # Sub-koleksi pembayaran
+│
+└── orders/                      # Koleksi orders (global)
+```
+
+### Firebase Services
+| Service | Fungsi |
+|---------|--------|
+| **Firebase Auth** | Login, Register, Auto-login |
+| **Cloud Firestore** | Database real-time |
+| **Firebase Storage** | Upload gambar (opsional) |
 
 ---
 
 ## 🧩 Struktur Proyek
 
 ```
-
 lib/
+├── main.dart                    # Entry point & providers setup
 │
-├── main.dart
 ├── models/
-│   └── product.dart
+│   └── product.dart             # Model Product
 │
-├── data/
-│   └── dummy_data.dart
+├── services/
+│   └── firebase_service.dart    # Firebase CRUD operations
+│
+├── providers/
+│   ├── auth_provider.dart       # Authentication state
+│   ├── cart_provider.dart       # Cart management
+│   ├── wishlist_provider.dart   # Wishlist management
+│   └── settings_provider.dart   # Dark mode & language
 │
 ├── pages/
 │   ├── home_page.dart
@@ -55,130 +139,152 @@ lib/
 │   ├── new_collection_page.dart
 │   ├── cart_page.dart
 │   ├── wishlist_page.dart
-│   └── profile_page.dart
+│   ├── profile_page.dart
+│   ├── profile_subpages.dart    # My Orders, Address, Payment
+│   ├── product_detail_page.dart
+│   ├── login_page.dart
+│   ├── register_page.dart
+│   └── settings_page.dart
 │
 └── widgets/
-	 └── product_card.dart
-
-````
-
----
-
-## 🧠 Arsitektur Aplikasi
-
-Aplikasi ini menggunakan **arsitektur sederhana berbasis StatefulWidget**,  yaitu **Vanilla Flutter**.  
-Seluruh data produk diambil dari file `dummy_data.dart`, kemudian dikonversi ke model `Product` agar mudah digunakan pada setiap halaman.
+    ├── product_card.dart
+    └── firebase_admin_page.dart # Admin CRUD products
+```
 
 ---
 
 ## 🎨 Desain Antarmuka
 
-- Desain diadaptasi dari **[Figma Home Decor App UI Kit](https://www.figma.com/design/lZMfNa7bt1VyKcLzFpuX0J/Home-Decor-App-Mobile-UI-Kit)**.  
-- Warna dominan:  
-  - 🟤 **Coklat (#6B4E3D)** untuk teks, ikon, dan tombol.  
-  - ⚪ **Putih (#FFFFFF)** untuk latar utama.  
-- Font utama menggunakan **Poppins** dari pustaka **Google Fonts**.  
-- Ikon diambil dari **Material Icons** bawaan Flutter.  
+- **Sumber desain:** [Figma Home Decor App UI Kit](https://www.figma.com/design/lZMfNa7bt1VyKcLzFpuX0J/Home-Decor-App-Mobile-UI-Kit)
+- **Warna dominan:**
+  - 🟤 Light Mode: **Coklat (#6B4E3D)** 
+  - 🌙 Dark Mode: **Gold (#D7A86E)** accent
+- **Font:** Poppins (Google Fonts)
+- **Icons:** Material Icons
 
 ---
 
-## 🧰 Dependensi (pubspec.yaml)
-
-Berikut dependensi utama yang digunakan:
+## 🧰 Dependencies
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.2.1
-  google_fonts: ^6.3.2
+  
+  # Firebase
+  firebase_core: ^3.8.1
+  cloud_firestore: ^5.6.0
+  firebase_auth: ^5.5.0
+  firebase_storage: ^12.4.10
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # UI/UX
+  google_fonts: ^6.2.1
   cached_network_image: ^3.4.1
-  animations: ^2.1.0
-
-flutter:
-  uses-material-design: true
-  assets:
-    - assets/images/
-````
-
-> Catatan: Aplikasi tidak menggunakan Provider, Firebase, atau package state management lainnya.
+  
+  # Location
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  
+  # Utils
+  image_picker: ^1.2.1
+  intl: ^0.19.0
+```
 
 ---
 
 ## 🚀 Cara Menjalankan Aplikasi
 
-1. **Clone repositori ini**
+### Prerequisites
+- Flutter SDK ^3.8.1
+- Android SDK (minSdk 23)
+- Firebase project configured
 
+### Setup
+
+1. **Clone repositori**
    ```bash
    git clone https://github.com/username/home_decor_app.git
-   ```
-2. **Masuk ke direktori proyek**
-
-   ```bash
    cd home_decor_app
    ```
-3. **Instal dependensi**
 
+2. **Setup Firebase**
+   ```bash
+   # Install FlutterFire CLI
+   dart pub global activate flutterfire_cli
+   
+   # Configure Firebase
+   flutterfire configure
+   ```
+
+3. **Install dependencies**
    ```bash
    flutter pub get
    ```
-4. **Jalankan aplikasi**
 
+4. **Run aplikasi**
    ```bash
    flutter run
    ```
 
 ---
 
-## 🧾 Data Dummy
+## 📊 Fitur CRUD Firebase
 
-Seluruh data produk disimpan dalam file `dummy_data.dart`, kemudian dikonversi menjadi model `Product`.
-Berikut contoh potongan data:
+| Collection | Create | Read | Update | Delete |
+|------------|:------:|:----:|:------:|:------:|
+| Products | ✅ | ✅ | ✅ | ✅ |
+| Cart | ✅ | ✅ | ✅ | ✅ |
+| Wishlist | ✅ | ✅ | - | ✅ |
+| Orders | ✅ | ✅ | ✅ | - |
+| Addresses | ✅ | ✅ | ✅ | ✅ |
+| Payment Methods | ✅ | ✅ | ✅ | ✅ |
 
-```dart
-final List<Map<String, dynamic>> bestSellerData = [
-  {
-    "title": "Green Bed",
-    "image": "assets/bed.jpg",
-    "price": 285.00,
-    "description": "Comfortable modern green bed made with premium materials.",
-  },
-  {
-    "title": "Kitchen Cart",
-    "image": "assets/cart.jpg",
-    "price": 40.00,
-    "description": "Compact kitchen cart with wooden design and strong wheels.",
-  },
-];
+---
+
+## 🔄 Alur Checkout
+
+```
+Cart Page
+    │
+    ▼
+[Tombol Checkout]
+    │
+    ▼
+┌─────────────────────────┐
+│ Dialog Konfirmasi       │
+│ ├── Ringkasan Pesanan   │
+│ ├── Pilih Metode Bayar  │
+│ └── Total Amount        │
+└─────────────────────────┘
+    │
+    ▼ (Konfirmasi)
+Firebase: createOrder()
+    │
+    ▼
+Clear Cart → Navigate to My Orders
 ```
 
 ---
 
-## 🧪 Pengujian Aplikasi
+## 🧪 Testing
 
-* Seluruh halaman telah diuji pada emulator Android.
-* Navigasi antarhalaman berjalan dengan baik menggunakan **BottomNavigationBar**.
-* Waktu muat halaman cepat dan antarmuka tampil konsisten tanpa error.
-
----
-
-## 🔮 Rencana Pengembangan Selanjutnya
-
-Aplikasi ini masih memiliki potensi untuk dikembangkan lebih lanjut, antara lain:
-
-* 🔐 Menambahkan **sistem login dan autentikasi pengguna**.
-* ☁️ Mengintegrasikan **Firebase** untuk menyimpan data produk, pengguna, dan transaksi secara real-time.
-* 💳 Menambahkan fitur **checkout dan pembayaran online**.
-* 🖼️ Meningkatkan **UI responsif** agar optimal di berbagai ukuran layar perangkat.
+- ✅ Tested pada Android Emulator (API 33)
+- ✅ Tested pada physical device
+- ✅ Firebase sync verified
+- ✅ Dark mode pada semua halaman
+- ✅ Multi-language support
 
 ---
 
 ## 👨‍💻 Pengembang
 
-* **Nama:** Abdan Nawwaf El Hibban
-* **Proyek:** Flutter Home Decor Store
-* **Tujuan:** Tugas praktikum/pengembangan aplikasi mobile berbasis Flutter
-* **Bahasa:** Dart (Flutter SDK)
+- **Nama:** Abdan Nawwaf El Hibban
+- **Proyek:** Flutter Home Decor Store
+- **Tech Stack:** Flutter, Dart, Firebase
+- **State Management:** Provider Pattern
 
 ---
 
@@ -189,15 +295,21 @@ Desain UI diadaptasi dari *Figma Community Home Decor App UI Kit*.
 
 ---
 
-## 📸 Cuplikan Tampilan
+## 📸 Screenshots
 
-| Halaman        | Preview                                          |
-| -------------- | ------------------------------------------------ |
-| Home           | ![Home](screenshots/home.png)                    |
-| Best Seller    | ![Best Seller](screenshots/bestseller.png)       |
-| New Collection | ![New Collection](screenshots/newcollection.png) |
-| Cart           | ![Cart](screenshots/cart.png)                    |
-| Wishlist       | ![Wishlist](screenshots/wishlist.png)            |
-| Profile        | ![Profile](screenshots/profile.png)              |
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Home](screenshots/home.png) | ![Home Dark](screenshots/home_dark.png) |
+| ![Cart](screenshots/cart.png) | ![Cart Dark](screenshots/cart_dark.png) |
+| ![Profile](screenshots/profile.png) | ![Profile Dark](screenshots/profile_dark.png) |
 
 ---
+
+## ✨ Fitur Highlights
+
+- 🔥 **Real-time Sync** - Data otomatis update dengan Firebase
+- 🌙 **Dark Mode** - Toggle tema gelap/terang
+- 🌐 **Multi-language** - ID & EN support
+- 🛒 **Smart Cart** - Sinkronisasi antar device
+- 💳 **Payment Dialog** - Konfirmasi sebelum checkout
+- 📱 **Responsive** - Optimal di berbagai ukuran layar
