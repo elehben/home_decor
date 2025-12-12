@@ -297,11 +297,46 @@ Desain UI diadaptasi dari *Figma Community Home Decor App UI Kit*.
 
 ## 📸 Screenshots
 
+### 🏠 Home & Catalog
+
 | Light Mode | Dark Mode |
 |------------|-----------|
 | ![Home](screenshots/home.png) | ![Home Dark](screenshots/home_dark.png) |
-| ![Cart](screenshots/cart.png) | ![Cart Dark](screenshots/cart_dark.png) |
+| ![Best Seller](screenshots/bestseller.png) | ![Best Seller Dark](screenshots/bestseller_dark.png) |
+| ![New Collection](screenshots/newcollection.png) | ![New Collection Dark](screenshots/newcollection_dark.png) |
+
+### 🛒 Shopping
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![My Cart](screenshots/mycart.png) | ![My Cart Dark](screenshots/mycart_dark.png) |
+| ![Wishlist](screenshots/wishlist.png) | ![Wishlist Dark](screenshots/wishlist_dark.png) |
+| ![Product Detail](screenshots/product_dark.png) | |
+
+### 💳 Checkout Flow
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Confirm Payment](screenshots/confirm.png) | ![Confirm Dark](screenshots/confirm_dark.png) |
+| ![Payment](screenshots/payment.png) | ![Payment Dark](screenshots/payment_dark.png) |
+| ![Success](screenshots/success.png) | ![Success Dark](screenshots/success_dark.png) |
+
+### 👤 Profile & Settings
+
+| Light Mode | Dark Mode |
+|------------|-----------|
 | ![Profile](screenshots/profile.png) | ![Profile Dark](screenshots/profile_dark.png) |
+| ![Profile 2](screenshots/profile2_dark.png) | |
+| ![My Orders](screenshots/myorder.png) | ![My Orders Dark](screenshots/myorder_dark.png) |
+| ![Shipping](screenshots/shipping.png) | ![Shipping Dark](screenshots/shipping_dark.png) |
+| ![Settings](screenshots/settings.png) | ![Settings Dark](screenshots/settings_dark.png) |
+
+### 🔥 Firebase Admin
+
+| Screenshot |
+|------------|
+| ![Add Firebase](screenshots/add_firbase.png) |
+| ![Firebase Dark](screenshots/firebase_dark.png) |
 
 ---
 
