@@ -7,6 +7,56 @@ import '../pages/product_detail_page.dart';
 import '../services/firebase_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+Widget _buildProductImage(String imagePath, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return Image.network(
+      imagePath,
+      width: width,
+      height: height,
+      fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade200,
+          child: Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                  : null,
+              strokeWidth: 2,
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade200,
+          child: const Icon(Icons.broken_image, color: Colors.grey),
+        );
+      },
+    );
+  } else {
+    return Image.asset(
+      imagePath,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade200,
+          child: const Icon(Icons.broken_image, color: Colors.grey),
+        );
+      },
+    );
+  }
+}
+
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
@@ -175,7 +225,7 @@ class CartPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(8),
                                     child: Container(
                                       color: isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF5F5F5),
-                                      child: Image.asset(
+                                      child: _buildProductImage(
                                         cartItem.product.image,
                                         width: 70,
                                         height: 70,
